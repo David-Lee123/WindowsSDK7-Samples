@@ -31,7 +31,7 @@
 #pragma warning(push)
 #pragma warning(disable:4201)
 
-#include <atalkwsh.h>
+//#include <atalkwsh.h>
 
 #pragma warning(pop)
 
@@ -207,7 +207,7 @@ PrintProtocolInfo(
         case AF_APPLETALK:
             printf("AF_APPLETALK\n");
             printf("                 Protocol: ");      
-
+#if 0
             switch ( wsapi->iProtocol )
             {
                 case DDPPROTO_RTMP:
@@ -244,6 +244,7 @@ PrintProtocolInfo(
                     printf("ATPROTO_PAP\n");
                     break;
             }
+#endif
             break;
 
         case AF_NETBIOS:

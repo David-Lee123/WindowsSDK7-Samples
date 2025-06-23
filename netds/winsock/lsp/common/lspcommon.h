@@ -334,7 +334,7 @@ BOOL IsNodeOnList(PLIST_ENTRY ListHead, PLIST_ENTRY Entry);
 // Prints a message to the debugger
 void 
 dbgprint(
-        char *format,
+        const char *format,
         ...
         );
 

@@ -16,6 +16,8 @@
 //    See instlsp.cpp for more information on running this code.
 //
 #include "instlsp.h"
+#include <string>
+#include <VersionHelpers.h>
 
 //
 // Function: InstallLsp
@@ -56,7 +58,9 @@ InstallLsp(
 
     if ( NULL == lpszLspName )
     {
-        lpszLspName = DEFAULT_LSP_NAME;
+        //lpszLspName = DEFAULT_LSP_NAME;
+        fprintf(stderr, "InstallLsp: empty LspName!\n");
+        goto cleanup;
     }
 
     // Convert the LSP name to UNICODE since the Winsock catalog is all UNICODE
@@ -125,9 +129,9 @@ InstallLsp(
     RetrieveLspGuid( lpszLspPathAndFile, &ProviderBaseGuid );
 
     osv.dwOSVersionInfoSize = sizeof(osv);
-    GetVersionEx( (LPOSVERSIONINFO) &osv );
+   // GetVersionEx( (LPOSVERSIONINFO) &osv );
 
-    if ( osv.dwMajorVersion >= 6 ) 
+    if (IsWindowsVistaOrGreater() /*osv.dwMajorVersion >= 6*/ )
     {
         // On Windows Vista, use the new LSP install API
 
@@ -1301,7 +1305,7 @@ InstallProviderVista(
     WSAPROTOCOL_INFOW *pEnumProviders = NULL;
     HMODULE hMod = NULL;
     DWORD dwEntryCount;
-    char *lpInstallFunction = NULL;
+    std::string lpInstallFunction;
     INT iEnumProviderCount;
     int rc, i, j, error;
     
@@ -1312,7 +1316,7 @@ InstallProviderVista(
     // Dynamically load the function in order for this installer to run properly
     // on downlevel OSes
     //
-    hMod = LoadLibrary("ws2_32.dll");
+    hMod = LoadLibrary(TEXT("ws2_32.dll"));
     if ( NULL == hMod )
     {
         fprintf(stderr, "Unable to load ws2_32.dll!\n");
@@ -1346,7 +1350,7 @@ InstallProviderVista(
     // Load the new install function
     lpInstallProviderAndChains = (LPWSCINSTALLPROVIDERANDCHAINS) GetProcAddress( 
             hMod,
-            lpInstallFunction
+            lpInstallFunction.c_str()
             );
     if ( NULL == lpInstallProviderAndChains )
     {
@@ -1377,7 +1381,7 @@ InstallProviderVista(
         if ( SOCKET_ERROR == rc )
         {
             fprintf(stderr, "InstallProviderVista: %s failed: %d\n", 
-                    lpInstallFunction, error );
+                    lpInstallFunction.c_str(), error);
             goto cleanup;
         }
     }
@@ -1434,7 +1438,7 @@ InstallProviderVista(
         if ( SOCKET_ERROR == rc )
         {
             fprintf(stderr, "InstallProviderVista: %s failed: %d\n", 
-                    lpInstallFunction, error );
+                    lpInstallFunction.c_str(), error);
             goto cleanup;
         }
     }

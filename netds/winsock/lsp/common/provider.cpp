@@ -49,9 +49,10 @@ HANDLE gLspHeap = NULL;
 //
 
 #ifdef DBG
+#include <strsafe.h>
 void 
 dbgprint(
-    char *format,
+    const char *format,
     ...
     )
 {
@@ -68,11 +69,11 @@ dbgprint(
 
     EnterCriticalSection(&gDebugCritSec);
     va_start(vl, format);
-    StringCbVPrintf(dbgbuf1, sizeof(dbgbuf1),format, vl);
-    StringCbPrintf(dbgbuf2, sizeof(dbgbuf2),"%lu: %s\r\n", pid, dbgbuf1);
+    StringCbVPrintfA(dbgbuf1, sizeof(dbgbuf1),format, vl);
+    StringCbPrintfA(dbgbuf2, sizeof(dbgbuf2),"%lu: %s\r\n", pid, dbgbuf1);
     va_end(vl);
 
-    OutputDebugString(dbgbuf2);
+    OutputDebugStringA(dbgbuf2);
     LeaveCriticalSection(&gDebugCritSec);
 }
 #endif
@@ -141,7 +142,7 @@ EnumerateProviders(
         // Find the 32-bit catalog enumerator
         fnWscEnumProtocols32 = (LPWSCENUMPROTOCOLS) GetProcAddress(
                 hModule, 
-                TEXT( "WSCEnumProtocols32" )
+                ( "WSCEnumProtocols32" )
                 );
         if ( NULL == fnWscEnumProtocols32 )
             goto cleanup;
